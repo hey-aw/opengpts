@@ -1,2 +1,5 @@
 .env.gcp.yaml
 .env
+redis-volume/dump.rdb
+.env
+.gitignore
