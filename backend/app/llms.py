@@ -5,7 +5,8 @@ from urllib.parse import urlparse
 
 import boto3
 import httpx
-from langchain_community.chat_models import BedrockChat, ChatAnthropic, ChatFireworks
+from langchain_anthropic import ChatAnthropic
+from langchain_community.chat_models import BedrockChat, ChatFireworks
 from langchain_community.chat_models.ollama import ChatOllama
 from langchain_google_vertexai import ChatVertexAI
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
@@ -67,7 +68,11 @@ def get_anthropic_llm(bedrock: bool = False):
         )
         model = BedrockChat(model_id="anthropic.claude-v2", client=client)
     else:
-        model = ChatAnthropic(temperature=0, max_tokens_to_sample=2000)
+        model = ChatAnthropic(
+            model_name="claude-3-haiku-20240307",
+            max_tokens_to_sample=2000,
+            temperature=0,
+        )
     return model
 
 
