@@ -36,7 +36,7 @@ jobs:
         working-directory: ${{ env.WORKDIR }}
     strategy:
       matrix:
-        python-versions:
+        python-version:
           - "3.11"
     name: Python ${{ matrix.python-version }} tests
     services:
