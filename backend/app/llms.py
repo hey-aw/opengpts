@@ -1,21 +1,21 @@
-import logging
 import os
 from functools import lru_cache
 from urllib.parse import urlparse
 
 import boto3
 import httpx
+import structlog
 from langchain_anthropic import ChatAnthropic
 from langchain_community.chat_models import BedrockChat, ChatFireworks
 from langchain_community.chat_models.ollama import ChatOllama
 from langchain_google_vertexai import ChatVertexAI
 from langchain_openai import AzureChatOpenAI, ChatOpenAI
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 @lru_cache(maxsize=4)
-def get_openai_llm(gpt_4: bool = False, azure: bool = False):
+def get_openai_llm(model: str = "gpt-3.5-turbo", azure: bool = False):
     proxy_url = os.getenv("PROXY_URL")
     http_client = None
     if proxy_url:
@@ -27,7 +27,7 @@ def get_openai_llm(gpt_4: bool = False, azure: bool = False):
 
     if not azure:
         try:
-            openai_model = "gpt-4-turbo-preview" if gpt_4 else "gpt-3.5-turbo"
+            openai_model = model
             llm = ChatOpenAI(
                 http_client=http_client,
                 model=openai_model,

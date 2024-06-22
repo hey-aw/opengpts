@@ -45,7 +45,7 @@ class DallEInput(BaseModel):
 
 
 class AvailableTools(str, Enum):
-    ACTION_SERVER = "action_server_by_robocorp"
+    ACTION_SERVER = "action_server_by_sema4ai"
     CONNERY = "ai_action_runner_by_connery"
     DDG_SEARCH = "ddg_search"
     TAVILY = "search_tavily"
@@ -79,11 +79,11 @@ class ActionServerConfig(ToolConfig):
 
 class ActionServer(BaseTool):
     type: AvailableTools = Field(AvailableTools.ACTION_SERVER, const=True)
-    name: str = Field("Action Server by Robocorp", const=True)
+    name: str = Field("Action Server by Sema4.ai", const=True)
     description: str = Field(
         (
             "Run AI actions with "
-            "[Robocorp Action Server](https://github.com/robocorp/robocorp)."
+            "[Sema4.ai Action Server](https://github.com/Sema4AI/actions)."
         ),
         const=True,
     )
@@ -287,7 +287,11 @@ def _get_tavily_answer():
 
 
 def _get_action_server(**kwargs: ActionServerConfig):
-    toolkit = ActionServerToolkit(url=kwargs["url"], api_key=kwargs["api_key"])
+    toolkit = ActionServerToolkit(
+        url=kwargs["url"],
+        api_key=kwargs["api_key"],
+        additional_headers=kwargs.get("additional_headers", {}),
+    )
     tools = toolkit.get_tools()
     return tools
 
