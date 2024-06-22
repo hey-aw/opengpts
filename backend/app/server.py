@@ -3,9 +3,10 @@ import os
 from pathlib import Path
 
 import orjson
-from fastapi import FastAPI, Form, UploadFile
+from fastapi import FastAPI, Form, UploadFile, Request
 from fastapi.exceptions import HTTPException
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 import app.storage as storage
 from app.api import router as api_router
@@ -50,6 +51,28 @@ async def ingest_files(
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok"}
+
+class ZulipMessage(BaseModel):
+    bot_email: str
+    bot_full_name: str
+    data: str
+    message: dict
+    token: str
+    trigger: str
+
+
+@app.post("/zulip-webhook")
+async def zulip_webhook(request: Request):
+    payload = await request.json()
+    message = ZulipMessage(**payload)
+
+    # Craft a response message
+    response_message = {
+        "content": f"Received your message: {message.data}"
+    }
+
+    return response_message
+
 
 
 ui_dir = str(ROOT / "ui")
